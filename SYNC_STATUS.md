@@ -6,16 +6,59 @@ This file tracks who updated what and when. Always check this to see what the ot
 
 ## 📊 Last Update
 
-**Timestamp:** 2025-11-14 20:30 NZDT
-**Updated By:** Claude Code (Cursor)
-**Action:** Uploaded both projects to GitHub (265+ files), created 3-Claude sync system, comprehensive documentation
-**Duration:** 4+ hour evening session
+**Timestamp:** 2025-11-15 15:15 NZDT
+**Updated By:** Claude Code (CLI)
+**Action:** Fixed database configuration and monitoring dashboard, prepared trade journal for NT8 integration
+**Duration:** 90 minute afternoon session
 
 ---
 
 ## 📜 Recent Session History (Most Recent First)
 
 Add new entries at the TOP of this list:
+
+---
+
+### 2025-11-15 15:15 NZDT - Claude Code (CLI)
+**Action:** Database & Monitoring Infrastructure Fixes
+**Files Modified:**
+- trade_journal.py - Fixed database credentials (lines 17-23)
+- services/postgres/init.sql - Added complete trade journal schema (lines 141-238)
+- monitoring_dashboard.py - Added /control-dashboard route (lines 1052-1055)
+- app.py - Added /health endpoint (lines 1278-1282)
+- All sync files updated with database/monitoring fixes
+**Issues Found:**
+- Trade journal database had 0 trades (NT8 not logging to database)
+- Port 15002 /control-dashboard route missing
+- Port 15000 showing UNHEALTHY (missing /health endpoint)
+- Database password mismatches
+- Missing trade journal tables in PostgreSQL
+**Fixes Applied:**
+- Rebuilt PostgreSQL database with complete schema (8 tables + 2 views)
+- Fixed database credentials across all services
+- Added missing routes and health endpoints
+- All 4 Docker containers now HEALTHY ✅
+**Testing:**
+- Verified all API endpoints working
+- Tested database connections
+- Confirmed monitoring dashboard fully functional
+**Next:** Add PostgreSQL logging to NT8 TradingBridgeSimple.cs (install Npgsql, add INSERT on fills)
+**Outcome:** Complete database infrastructure ready, monitoring fully operational!
+
+---
+
+### 2025-11-15 08:45 NZDT - Claude Code (CLI)
+**Action:** Critical bug fix - Fast-filling limit orders TP/SL issue
+**Files Modified:**
+- TradingBridgeSimple.cs (live addon) - Added final position check (lines 213-258)
+- NT8/TradingBridgeSimple.cs (backup) - Same fix applied
+- All sync files updated with bug details
+**Issue:** Rob's Nov 15 signal filled instantly, no TP/SL placed, position unprotected
+**Root Cause:** Fast-fill race condition - order disappeared from Orders collection before protective orders placed
+**Fix:** Added fallback position check before giving up on protective orders
+**Testing:** Manual limit order test successful - TP and SL placed correctly ✅
+**Next:** Add traders to journal, monitor next Rob signals
+**Outcome:** Critical production bug fixed and tested!
 
 ---
 
