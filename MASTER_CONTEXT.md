@@ -2,7 +2,7 @@
 
 **Complete project overview for all Claude instances**
 
-Last Updated: 2025-11-15 Evening NZDT (Trade Journal Complete with Account Management)
+Last Updated: 2025-11-16 Evening NZDT (TradeStation Integration Complete)
 
 ---
 
@@ -34,6 +34,17 @@ Last Updated: 2025-11-15 Evening NZDT (Trade Journal Complete with Account Manag
 - Monitors TraderRob's #trade-signals channel
 - Parses signals using regex
 - Sends to TradingBridge API
+
+**NEW - TradeStation Integration (Nov 16, 2025):**
+- TradeStation strategies log trades to CSV file (ts_trades.txt)
+- Python monitor (ts_log_monitor.py) watches log file for new trades
+- Parses CSV format: Date,Time,Action,Symbol,Price,Type,Strategy,Timeframe
+- Normalizes symbols (@MES → MES) and builds JSON payload
+- Sends to Flask /tradestation-webhook endpoint
+- Full metadata captured: platform, strategy name, timeframe
+- Status: WORKING (14 trades tested successfully)
+- Next: Web dashboard for dynamic account/quantity configuration
+
 
 **2. TradingBridge Core (Flask API):**
 - Port: 15000

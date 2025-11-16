@@ -1,14 +1,20 @@
-# TradersHub - Quick Context (TL;DR)
-
-**⚡ READ THIS FIRST for instant catch-up!**
-
----
-
 ## 📅 Last Session Info
 
 **Date:** 2025-11-16
 **Updated By:** Claude Code (CLI)
-**Time:** Early Morning - Documentation Correction COMPLETE
+**Time:** Evening - TradeStation Integration COMPLETE ✅
+
+---
+
+## 📝 In 3 Sentences
+
+**Current Focus:** Building TradeStation/MultiCharts Config Dashboard for dynamic account and quantity management.
+
+**Just Completed:** TradeStation integration working end-to-end! 14 trades tested. Monitor parses CSV → Flask → NT8. Full metadata captured. See TRADESTATION_INTEGRATION_COMPLETE.md.
+
+**Next Up:** Build web dashboard for strategy config + connect to journal DB + add monitoring/logs integration.
+
+---
 
 ---
 
