@@ -58,20 +58,43 @@ Enable/disable toggle switches per platform
 Outcome: Web UI to enable/disable platforms without touching database
 
 PHASE 2: SIGNAL SOURCE EXPANSION (6-7 hrs)
-2.1: TradeStation Signals (2 hrs)
+2.1: TradeStation Signals (2 hrs) - UPDATED WITH RESEARCH
 What to Build:
 
 New endpoint: /tradestation-webhook in app.py
 Normalization function for TradeStation → TradersHub format
 Documentation: docs/TradeStation_Template.txt (EasyLanguage code)
+SOLUTION 1: WebClient HTTP POST (PRIMARY - Try First)
+SOLUTION 2: File Drop + Python Monitor (BACKUP - 100% Reliable)
 
 Key Decisions:
 
-TradeStation sends HTTP POST (like TradingView)
-Map their fields: action→signal, symbol→instrument, etc.
-Routes to same Execution Router
+**SOLUTION 1 (WebClient - RECOMMENDED):**
+- TradeStation EasyLanguage WebClient.Create() sends HTTP POST directly
+- Works exactly like TradingView webhooks (same endpoint pattern)
+- Instant execution (<1 second)
+- Includes strategy_name field for journal tracking
+- Test first - if works, you're done!
 
-Outcome: TradeStation strategies send signals, execute on all platforms
+**SOLUTION 2 (File Monitoring - BACKUP):**
+- TradeStation writes JSON to text file per strategy
+- Python file_monitor.py watches C:\tradershub\incoming\ folder
+- Multiple files per strategy (strategy_momentum.txt, strategy_breakout.txt, etc.)
+- Enables per-strategy tracking in trade journal
+- 100% reliable (no network dependencies)
+- ~500ms delay (negligible)
+- Use if WebClient blocked by firewall/SSL
+
+**SOLUTION 3 (Custom DLL):**
+- Too complex - SKIP
+
+Implementation Plan:
+1. Build /tradestation-webhook endpoint (15 min)
+2. Create WebClient EasyLanguage template (5 min)
+3. Test WebClient → If works, DONE
+4. Build file_monitor.py as backup (30 min)
+
+Outcome: TradeStation strategies send signals with strategy_name field, execute on all platforms
 
 2.2: MultiCharts Signals (2 hrs)
 What to Build:
