@@ -2,7 +2,7 @@
 
 **Complete project overview for all Claude instances**
 
-Last Updated: 2025-11-14 18:15 NZDT
+Last Updated: 2025-11-15 Evening NZDT (Trade Journal Complete with Account Management)
 
 ---
 
@@ -268,9 +268,12 @@ All documentation in `C:\tradershub\docs\`:
 **Short Term:**
 - ✅ Stable auto-trading from Discord
 - ✅ Auto-startup on Windows restart
-- ⏳ GitHub sync system for 3 Claudes
+- ✅ Trade journal with analytics (Nov 15 - Batch 1 complete)
+- ✅ Trade journal UX enhancements (Nov 15 - Batch 2 complete)
+- ⏳ GitHub sync system for 3 Claudes (in progress)
 
 **Medium Term:**
+- Enhanced trade journal features (Account Balance, Settings - next tasks)
 - Security monitoring agent
 - Multi-platform support (MT5, TradeStation)
 - Enhanced signal parsing
@@ -300,4 +303,121 @@ All documentation in `C:\tradershub\docs\`:
 
 ---
 
-Last Updated: 2025-11-14 by Claude Code (Cursor)
+## 📊 Trade Journal Status (Nov 15 Evening - COMPLETE)
+
+**Completed Features (13 metric cards + account management):**
+
+**Metric Cards:**
+- 13 metric cards total:
+  - Total Trades, Win Rate, Total P&L, Avg P&L
+  - Best Trade, Worst Trade
+  - Expectancy, Profit Factor
+  - Avg Win, Avg Loss, Win/Loss Ratio
+  - Max Drawdown
+  - **Account Balance** (purple gradient, shows starting + P&L)
+
+**Account Management:**
+- Settings button (⚙️) in header navigation
+- Settings modal for managing all accounts
+- Configure starting balance per account
+- Hide/archive accounts (persisted to database)
+- Set display names and notes
+- All settings 100% persistent in PostgreSQL
+
+**Filtering & Display:**
+- Hidden accounts completely excluded from all views:
+  - Account dropdown (only non-hidden accounts)
+  - Trade table (only non-hidden account trades)
+  - All metric calculations (exclude hidden accounts)
+- Page X of Y pagination (top and bottom)
+- 7/30/90 day quick filter buttons
+- Auto-filtering dropdowns (no Apply button)
+- Sortable by 7 columns
+- Filterable by Account, Strategy, Instrument, Platform, Outcome, Date Range
+- All filters update both table AND all 13 metric cards dynamically
+
+**Trade Data:**
+- 863 total trades in database (from NT8)
+- 164 trades visible (from 2 active accounts: APEX 16 & 18)
+- 8 accounts hidden (12, 13, 14, 15, 17, PAAPEX001, PAAPEX002, Sim101)
+- NZ timezone DD/MM/YYYY HH:mm format
+- TP/SL columns (3 trades have data)
+- R-Multiple calculation (3 trades calculated)
+
+**User Feedback:**
+- Batch 1: "WELL DONE massive improvement in making it usable"
+- Batch 2: "LEGEND WOrks Perfect Well done indeed you!!!!! NICE WORK"
+- Account Settings: "WOW WOW WOW i did not think you would do it WELL DONE YOU!!!!!!"
+- Multi-browser test: "i just opened in remote page for journal and it is exactly the same...NICE WOKK MAN!!!!!! Legend as always"
+
+---
+
+## 🚀 Execution Router - Multi-Platform Plan (Nov 15 Late Evening)
+
+**Status:** PLANNING PHASE - Documentation Complete, Ready to Build
+
+**Purpose:** Enable TradersHub to execute trades on multiple platforms simultaneously
+
+**Documentation:** See `docs/EXECUTION_ROUTER_PLAN.md` for complete technical specification
+
+**Vision:**
+```
+Signal Sources (Discord, TradeStation, MultiCharts)
+           ↓
+   TradingBridge API
+           ↓
+   Execution Router (NEW)
+           ↓
+   ┌───────┼────────┐
+   ↓       ↓        ↓
+  NT8     MT5    cTrader
+```
+
+**Current State:**
+- Only NT8 execution (hardcoded in app.py)
+- Discord signals only
+- No platform flexibility
+
+**Target State:**
+- Multi-platform execution (NT8 + MT5 + cTrader)
+- Multiple signal sources (Discord + TradeStation + MultiCharts)
+- Dynamic platform enable/disable via UI
+- Health monitoring and failover
+- Comprehensive execution logging
+
+**Implementation Phases:**
+1. **Phase 1:** Router foundation + NT8 integration (1.5-2 hrs)
+2. **Phase 2:** MT5 integration (2-3 hrs)
+3. **Phase 3:** cTrader integration (3-4 hrs)
+4. **Phase 4:** TradeStation/MultiCharts signal sources (2-3 hrs)
+
+**Key Files:**
+- `docs/EXECUTION_ROUTER_PLAN.md` - Complete technical spec
+- `templates/execution_control.html` - Mock UI (already created)
+- `execution_router.py` - To be created
+- `app.py` - Minimal modification (backward compatible)
+
+**Database Tables (To Be Created):**
+- `execution_config` - Platform configurations
+- `execution_log` - Execution history and debugging
+- `mt5_signal_queue` - MT5 HTTP polling queue
+
+**Safety Features:**
+- ✅ Non-breaking changes (NT8 continues working)
+- ✅ Easy rollback (3 lines of code)
+- ✅ Incremental implementation (one platform at a time)
+- ✅ Comprehensive testing strategy
+- ✅ Full documentation before code
+
+**UI Access:**
+- Execution Control: http://localhost:15002/execution-control (mock UI ready)
+
+**Next Steps:**
+1. Commit documentation to GitHub
+2. Implement Phase 1 (Router + NT8)
+3. Test NT8 execution (should work identically)
+4. Deploy Phase 2 when ready
+
+---
+
+Last Updated: 2025-11-15 Late Evening by Claude Code (CLI)
