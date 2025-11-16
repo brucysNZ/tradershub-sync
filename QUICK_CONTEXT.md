@@ -1,14 +1,12 @@
 ## 📅 Last Session Info
-
 **Date:** 2025-11-16
 **Updated By:** Claude Code (CLI)
 **Time:** Late Evening - Config Dashboard COMPLETE ✅
 
----
-
 ## 📝 In 3 Sentences
-
-**Current Focus:** Adding database logging for TradeStation trades for dynamic account and quantity management.
+**Current Focus:** Implementing TradeStation Universal Function (next session)
+**Just Completed:** Config Dashboard! Web UI for strategy account/quantity routing.
+**Next Up:** Build TH_SendAlert EasyLanguage function, retire ts_log_monitor.py
 
 **Just Completed:** Config Dashboard! Web UI for strategy account/quantity routing. Monitor parses CSV → Flask → NT8. Full metadata captured. See TRADESTATION_INTEGRATION_COMPLETE.md.
 
