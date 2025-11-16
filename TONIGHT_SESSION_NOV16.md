@@ -53,3 +53,27 @@
 4. Test end-to-end with live TradeStation execution
 
 Last Updated: 2025-11-16 21:15 NZDT
+
+---
+
+## 🚀 NEXT SESSION PLAN (Added 21:30)
+
+**MAJOR ARCHITECTURE UPGRADE APPROVED:**
+
+Claude Web proposed a superior approach using TradeStation Universal Function:
+- Create ONE EasyLanguage function (TH_SendAlert)
+- Each strategy calls it with 1 line instead of 50+
+- Direct HTTP POST to Flask (no file monitoring)
+- 95% code reduction, 95% faster maintenance
+
+**See:** NEXT_SESSION_PLAN.md for complete implementation plan
+
+**Changes to tonight's work:**
+- Config Dashboard: KEEP (still useful for account routing)
+- ts_log_monitor.py: RETIRE (obsolete with direct HTTP)
+- Database saving: KEEP (same need)
+
+**Time estimate:** 2-3 hours to implement
+**Risk:** Low (non-breaking, incremental testing)
+**Benefit:** Professional, scalable architecture for 100+ strategies
+
