@@ -6,41 +6,47 @@
 
 ## 📅 Last Session Info
 
-**Date:** 2025-11-15
+**Date:** 2025-11-16
 **Updated By:** Claude Code (CLI)
-**Time:** Evening session - Account Settings COMPLETE
+**Time:** Early Morning - Documentation Correction COMPLETE
 
 ---
 
 ## 📝 In 3 Sentences
 
-**Current Focus:** Completed full Account Settings feature - starting balance configuration, hide/archive functionality, and complete filtering of hidden accounts from all views.
+**Current Focus:** CRITICAL documentation update - corrected all sync files to accurately reflect TradingView webhooks as PRIMARY core system (Day 1 feature), Discord as SECONDARY (added later).
 
-**Just Completed:** Added 13th metric card "Account Balance" with purple gradient, Settings modal for managing accounts, and comprehensive filtering to exclude hidden accounts from dropdowns, tables, and all metrics.
+**Just Completed:** Updated MASTER_CONTEXT.md and QUICK_CONTEXT.md to document complete TradingView webhook flow, copy-trade-ui as KEY PAGE, and `/copy-trade` endpoint as PRIMARY webhook receiver.
 
-**Next Up:** Ready for next feature request - Account Settings fully functional and saved to database.
+**Next Up:** Update SESSION_STATE.md and push all corrected documentation to tradershub-sync repository for Claude Web access.
 
 ---
 
 ## 📁 Active Files
 
 Currently editing:
-- None (Account Settings complete)
+- `docs/sync/MASTER_CONTEXT.md` - Added TradingView webhook flow documentation
+- `docs/sync/QUICK_CONTEXT.md` - Updated to reflect TradingView as PRIMARY
+- `docs/sync/SESSION_STATE.md` - Next to update
+
+Recently modified (Nov 16 early morning - CRITICAL Documentation Correction):
+- `docs/sync/MASTER_CONTEXT.md` - Complete TradingView webhook flow, architecture correction
+- `docs/sync/QUICK_CONTEXT.md` - Updated session info and focus
 
 Recently modified (Nov 15 evening - Account Settings):
 - `trade_journal.py` - Added account balance APIs, settings APIs, hidden account filtering in all queries
 - `templates/trade_journal.html` - Added Account Balance card, Settings button, Settings modal
 - Database: Created `account_settings` table with triggers
 
-Recently modified (Nov 15 evening - Batch 2):
-- `templates/trade_journal.html` - Added pagination top/bottom, date filter buttons, auto-filtering
-- `trade_journal.py` - Fixed total_count query (RealDictCursor), added from_date/to_date support
-
 ---
 
 ## 💡 Latest Decision
 
-**Topic:** Multi-Platform Execution Router
+**Topic:** CRITICAL Documentation Correction
+**Choice:** Update ALL documentation to reflect TradingView webhooks as PRIMARY core system
+**Why:** User frustrated that Claude didn't know TradingView is Day 1 feature; accurate documentation essential for future Claude instances and development continuity
+
+**Previous Decision:** Multi-Platform Execution Router
 **Choice:** Document complete execution router plan BEFORE implementing
 **Why:** Ensure next Claude can continue if system fails; comprehensive plan reduces risk; GitHub backup ensures continuity
 
@@ -48,16 +54,21 @@ Recently modified (Nov 15 evening - Batch 2):
 
 ## 🎯 Priority Tasks
 
-1. **COMPLETE:** ✅ Account Settings fully implemented and tested
-2. **PLANNING:** 📋 Execution Router for multi-platform trading (NT8, MT5, cTrader)
-3. **NEXT:** Implement Phase 1 - Execution Router Foundation
-4. **FUTURE:** TradeStation/MultiCharts signal integration
+1. **IN PROGRESS:** 📝 Update all documentation to reflect TradingView as PRIMARY
+   - ✅ MASTER_CONTEXT.md updated with complete webhook flow
+   - ✅ QUICK_CONTEXT.md updated
+   - ⏳ SESSION_STATE.md next
+   - ⏳ Push to tradershub-sync repository
+2. **COMPLETE:** ✅ Account Settings fully implemented and tested
+3. **PLANNING:** 📋 Execution Router for multi-platform trading (NT8, MT5, cTrader)
+4. **FUTURE:** Implement Phase 1 - Execution Router Foundation
+5. **FUTURE:** TradeStation/MultiCharts webhook integration (following TradingView pattern)
 
 ---
 
 ## 🚧 Current Blockers
 
-- None - Account Settings complete, Execution Router documented and ready to build
+- None - Updating documentation to reflect accurate system architecture
 
 ---
 
@@ -162,12 +173,24 @@ Recently modified (Nov 15 evening - Batch 2):
 
 ## 💬 Notes
 
+**CRITICAL DOCUMENTATION UPDATE (Nov 16 Early Morning):**
+- **ISSUE:** User frustrated that Claude didn't know TradingView is THE CORE
+- **REALITY:** TradingView webhook system is PRIMARY (Day 1 feature)
+- **MISREPRESENTATION:** Docs incorrectly showed Discord as primary
+- **FIX:** Updating all sync files to reflect accurate architecture:
+  - TradingView webhooks = PRIMARY (Day 1)
+  - Copy-trade-ui = KEY PAGE for building webhook JSON
+  - `/copy-trade` endpoint = PRIMARY webhook receiver
+  - Discord scraping = SECONDARY (added later)
+  - TradeStation/MultiCharts will follow TradingView webhook pattern
+- **STATUS:** MASTER_CONTEXT.md and QUICK_CONTEXT.md updated, SESSION_STATE.md next
+
 **EXECUTION ROUTER PLANNING (Nov 15 Late Evening):**
 - Comprehensive plan documented in `docs/EXECUTION_ROUTER_PLAN.md`
 - Mock UI created: `templates/execution_control.html`
 - Strategy: Document first, then implement (smart approach!)
 - Goal: Enable multi-platform execution (NT8, MT5, cTrader)
-- Future: TradeStation/MultiCharts as signal sources
+- Future: TradeStation/MultiCharts as webhook signal sources (like TradingView)
 - Status: READY TO BUILD (all documentation complete)
 
 **ACCOUNT SETTINGS COMPLETE (Nov 15 Evening):**
@@ -178,9 +201,9 @@ Recently modified (Nov 15 evening - Batch 2):
 - User feedback: "WOW WOW WOW...WELL DONE YOU!!!!!!"
 
 **BACKUP STATUS:**
-- All changes committed to GitHub
+- All changes committed to GitHub (main tradershub repo)
 - Daily automated backups at 11:30 AM NZT working
-- Execution Router plan will be backed up next
+- tradershub-sync (PUBLIC) repo updated for Claude Web access
 
 ---
 

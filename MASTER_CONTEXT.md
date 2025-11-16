@@ -9,10 +9,10 @@ Last Updated: 2025-11-15 Evening NZDT (Trade Journal Complete with Account Manag
 ## 🎯 Project Purpose
 
 **TradersHub** is an automated trading system that:
-1. Monitors Discord for TraderRob's trading signals
-2. Automatically executes trades on NinjaTrader 8 (futures trading)
+1. **PRIMARY:** Receives TradingView strategy alerts via webhooks and executes on NT8
+2. **SECONDARY:** Monitors Discord for TraderRob's trading signals (added later)
 3. Manages risk with automatic stop-loss and take-profit orders
-4. Provides web-based monitoring and manual trade entry
+4. Provides web-based monitoring and TradingView webhook builder (copy-trade-ui)
 
 ---
 
@@ -20,16 +20,26 @@ Last Updated: 2025-11-15 Evening NZDT (Trade Journal Complete with Account Manag
 
 ### Components:
 
-**1. Signal Sources:**
-- Discord Web Monitor (Playwright-based scraper)
-  - Monitors TraderRob's #trade-signals channel
-  - Parses signals using regex
-  - Sends to TradingBridge API
+**1. Signal Sources (Priority Order):**
+
+**PRIMARY - TradingView Webhooks (Day 1 Feature):**
+- User creates strategy alert in TradingView
+- Uses copy-trade-ui page (port 15000) to build JSON webhook code
+- Webhook code uses TradingView template variables: `{{strategy.order.action}}`, `{{strategy.order.price}}`, etc.
+- TradingView alert fires → sends JSON webhook to http://server:15000/copy-trade
+- Flask `/copy-trade` endpoint receives, normalizes, forwards to NT8
+
+**SECONDARY - Discord Web Monitor (Added Later):**
+- Playwright-based Discord scraper
+- Monitors TraderRob's #trade-signals channel
+- Parses signals using regex
+- Sends to TradingBridge API
 
 **2. TradingBridge Core (Flask API):**
 - Port: 15000
-- Receives signals from Discord scraper
-- Validates and formats trades
+- **PRIMARY ENDPOINT:** `/copy-trade` - Receives TradingView webhooks
+- Also receives Discord scraper signals
+- Validates and normalizes trade data
 - Sends to NT8 via TCP (port 8889)
 - Stores trade history in PostgreSQL
 
@@ -137,8 +147,9 @@ START_NGROK_DASHBOARD.bat
 ## 📊 Key Files & Their Purpose
 
 ### Core Application Files:
-- `app.py` - Main Flask API, handles trade routing
-- `discord_web_monitor_playwright.py` - Scrapes Discord, parses signals
+- `app.py` - Main Flask API with **PRIMARY `/copy-trade` webhook endpoint**
+- `templates/copy_trade.html` - **KEY PAGE: TradingView webhook JSON builder** (port 15000/copy-trade-ui)
+- `discord_web_monitor_playwright.py` - Discord scraper (SECONDARY signal source)
 - `docker-compose.yml` - Defines all Docker services
 
 ### Configuration Files:
@@ -147,9 +158,10 @@ START_NGROK_DASHBOARD.bat
 - `config/instruments.json` - Instrument specifications
 
 ### UI Files:
+- `templates/copy_trade.html` - **PRIMARY: TradingView webhook builder** (http://localhost:15000/copy-trade-ui)
 - `templates/launch_pad.html` - System control dashboard
-- `templates/copy_trade_ui.html` - Manual trade entry interface
 - `templates/index.html` - Main monitoring page
+- `templates/trade_journal.html` - Trade journal with analytics
 
 ### Scripts:
 - `AUTO_START_TRADERSHUB_SILENT.bat` - Silent Windows startup
@@ -182,12 +194,93 @@ START_NGROK_DASHBOARD.bat
 
 | Service | Port | Purpose |
 |---------|------|---------|
-| Flask API | 15000 | Trade execution endpoint |
+| Flask API | 15000 | **PRIMARY: TradingView webhook endpoint** `/copy-trade` |
+| Copy-Trade UI | 15000 | **KEY PAGE:** Webhook JSON builder at `/copy-trade-ui` |
 | Monitoring Dashboard | 15002 | System monitoring UI |
 | PostgreSQL | 15432 | Database |
 | Redis | 16379 | Cache |
 | NT8 TradingBridge | 8889 | Trade execution |
 | Chrome Debug | 9222 | Discord scraper connection |
+
+---
+
+## 🔄 TradingView Webhook Flow (PRIMARY Signal Source - Day 1 Feature)
+
+**Complete Signal Flow:**
+
+1. **User Creates TradingView Strategy Alert:**
+   - Opens TradingView chart with trading strategy
+   - Strategy generates buy/sell signals
+   - User creates alert on strategy
+
+2. **User Builds Webhook JSON (Copy-Trade UI):**
+   - Opens http://localhost:15000/copy-trade-ui (or ngrok URL for remote)
+   - Fills form: Strategy Name, Instrument, Accounts, Order Type, Prices
+   - Selects "STRATEGY_DECIDES" for dynamic values
+   - Page generates JSON with TradingView template variables:
+     ```json
+     {
+       "key": "BruceTradingKey2025",
+       "strategy_name": "My Strategy",
+       "signal": "{{strategy.order.action}}",
+       "instrument": "MES",
+       "order_type": "{{strategy.order.type}}",
+       "price": "{{strategy.order.price}}",
+       "accounts": [{"id": "APEX16", "quantity": 1}]
+     }
+     ```
+   - User copies generated JSON
+
+3. **User Pastes JSON into TradingView Alert:**
+   - In TradingView alert settings → Notifications → Webhook URL
+   - Webhook URL: `http://your-ngrok-url.ngrok.io/copy-trade`
+   - Message: Paste the JSON from copy-trade-ui
+   - TradingView will replace template variables with actual values when alert fires
+
+4. **TradingView Alert Fires:**
+   - Strategy generates signal (buy/sell)
+   - TradingView replaces template variables:
+     - `{{strategy.order.action}}` → `"BUY"` or `"SELL"`
+     - `{{strategy.order.price}}` → `5847.25`
+     - `{{strategy.order.type}}` → `"MARKET"` or `"LIMIT"`
+   - TradingView sends HTTP POST to webhook URL with resolved JSON
+
+5. **Flask `/copy-trade` Endpoint Receives Webhook:**
+   - Located in `app.py` (lines 244-285)
+   - Validates security key
+   - Normalizes field names for NT8:
+     - `entry` → `price`
+     - `sl` → `stop_loss`
+     - `tp` → `take_profit`
+     - Converts `order_type` to lowercase
+     - Strips "M" from timeframe ("15M" → "15")
+   - Logs received JSON and normalized JSON
+
+6. **Forward to NT8 via TCP Socket:**
+   - Calls `send_to_nt8_socket(data)` function
+   - Opens TCP connection to localhost:8889
+   - Sends JSON to NT8 TradingBridge addon
+   - Closes connection
+
+7. **NT8 TradingBridge Addon Executes Trade:**
+   - C# addon listening on port 8889
+   - Receives JSON, parses trade details
+   - Submits market/limit order to broker
+   - Attaches stop-loss and take-profit orders (OCO linked)
+   - Logs execution to NT8 database
+
+**Key Features:**
+- ✅ Built on Day 1 of TradersHub development
+- ✅ Copy-trade-ui is THE KEY PAGE for building webhook JSON
+- ✅ Supports dynamic TradingView template variables
+- ✅ Works with any TradingView strategy (Pine Script or built-in)
+- ✅ Multi-account support (1 webhook → multiple NT8 accounts)
+- ✅ Automatic risk management (SL/TP orders)
+
+**Future Expansion:**
+- TradeStation will use same webhook pattern
+- MultiCharts will use same webhook pattern
+- Execution Router will support multiple platforms (NT8, MT5, cTrader)
 
 ---
 
@@ -362,9 +455,9 @@ All documentation in `C:\tradershub\docs\`:
 
 **Vision:**
 ```
-Signal Sources (Discord, TradeStation, MultiCharts)
+Signal Sources (TradingView Webhooks, Discord, TradeStation, MultiCharts)
            ↓
-   TradingBridge API
+   TradingBridge API (/copy-trade endpoint)
            ↓
    Execution Router (NEW)
            ↓
@@ -375,12 +468,14 @@ Signal Sources (Discord, TradeStation, MultiCharts)
 
 **Current State:**
 - Only NT8 execution (hardcoded in app.py)
-- Discord signals only
+- TradingView webhooks PRIMARY (Day 1)
+- Discord signals SECONDARY (added later)
 - No platform flexibility
 
 **Target State:**
 - Multi-platform execution (NT8 + MT5 + cTrader)
-- Multiple signal sources (Discord + TradeStation + MultiCharts)
+- Multiple signal sources (TradingView + Discord + TradeStation + MultiCharts)
+- All signal sources use webhook pattern (like TradingView)
 - Dynamic platform enable/disable via UI
 - Health monitoring and failover
 - Comprehensive execution logging
@@ -420,4 +515,5 @@ Signal Sources (Discord, TradeStation, MultiCharts)
 
 ---
 
-Last Updated: 2025-11-15 Late Evening by Claude Code (CLI)
+Last Updated: 2025-11-16 Early Morning by Claude Code (CLI)
+**Major Update:** Documentation corrected to reflect TradingView webhooks as PRIMARY core system (Day 1 feature)

@@ -1,20 +1,155 @@
 # Current Session State
 
-**Last Updated:** 2025-11-15 Evening NZDT
+**Last Updated:** 2025-11-16 Early Morning NZDT
 **Updated By:** Claude Code (CLI)
-**Session Date:** 2025-11-15 (Evening session - Trade Journal Upgrade)
+**Session Date:** 2025-11-16 (Early morning - CRITICAL Documentation Correction)
 
 ---
 
 ## 🎯 Where We Are Now
 
-Currently working on: Account Settings feature COMPLETE - full account management with hide/archive, starting balance configuration, and comprehensive filtering.
+Currently working on: CRITICAL documentation update - correcting all sync files to accurately reflect TradingView webhooks as PRIMARY core system (Day 1 feature), Discord as SECONDARY (added later).
 
-Project phase: Production - Live Trading System (Trade Journal Complete with Account Management)
+Project phase: Production - Live Trading System (Documentation Correction in Progress)
 
 ---
 
 ## ✅ What Was Just Completed
+
+### CRITICAL DOCUMENTATION CORRECTION - Nov 16 Early Morning (LATEST)
+
+**User Issue:**
+- User frustrated: "I am annoyed you DONT KNOW THAT!!!!!!!!!!!"
+- Claude instances don't know that TradingView webhooks are THE CORE of TradersHub
+- Documentation incorrectly presents Discord as primary signal source
+- Copy-trade-ui page not documented as KEY PAGE
+
+**The Reality:**
+- **TradingView webhook system is PRIMARY** - built on Day 1 of TradersHub
+- Copy-trade-ui page (http://localhost:15000/copy-trade-ui) is **THE KEY PAGE**
+- `/copy-trade` endpoint is **PRIMARY webhook receiver** (app.py lines 244-285)
+- Discord scraping is **SECONDARY** - added later as additional signal source
+- TradeStation and MultiCharts will follow **same webhook pattern** as TradingView
+
+**Complete Documentation Update:**
+
+1. **✅ MASTER_CONTEXT.md Updated**
+   - Changed "Project Purpose" section to show TradingView as PRIMARY
+   - Reordered "Signal Sources" to show TradingView first with "PRIMARY" label
+   - Added complete new section: "🔄 TradingView Webhook Flow (PRIMARY Signal Source - Day 1 Feature)"
+   - Documented 7-step webhook flow from TradingView to NT8
+   - Updated "Key Files" to highlight copy_trade.html as KEY PAGE
+   - Updated "Important Ports" table to show /copy-trade as PRIMARY endpoint
+   - Updated "Execution Router" vision to show TradingView as first signal source
+   - Files: `docs/sync/MASTER_CONTEXT.md`
+
+2. **✅ QUICK_CONTEXT.md Updated**
+   - Changed "In 3 Sentences" to reflect documentation correction focus
+   - Updated "Active Files" to show sync file updates in progress
+   - Added new "Latest Decision" explaining WHY this correction is critical
+   - Updated "Priority Tasks" to show documentation update as #1
+   - Added "CRITICAL DOCUMENTATION UPDATE" to Notes section
+   - Explained misrepresentation issue and fix strategy
+   - Files: `docs/sync/QUICK_CONTEXT.md`
+
+3. **⏳ SESSION_STATE.md In Progress**
+   - Adding this section now
+   - Will document complete TradingView webhook flow
+   - Will update "Where We Are Now" section
+
+**TradingView Webhook Flow (Complete 7-Step Process):**
+
+1. **User Creates TradingView Strategy Alert:**
+   - Opens TradingView chart with trading strategy
+   - Strategy generates buy/sell signals
+   - User creates alert on strategy
+
+2. **User Builds Webhook JSON (Copy-Trade UI):**
+   - Opens http://localhost:15000/copy-trade-ui
+   - Fills form: Strategy Name, Instrument, Accounts, Order Type, Prices
+   - Selects "STRATEGY_DECIDES" for dynamic values
+   - Page generates JSON with TradingView template variables:
+     ```json
+     {
+       "key": "BruceTradingKey2025",
+       "strategy_name": "My Strategy",
+       "signal": "{{strategy.order.action}}",
+       "instrument": "MES",
+       "order_type": "{{strategy.order.type}}",
+       "price": "{{strategy.order.price}}",
+       "accounts": [{"id": "APEX16", "quantity": 1}]
+     }
+     ```
+   - User copies generated JSON
+
+3. **User Pastes JSON into TradingView Alert:**
+   - In TradingView alert settings → Notifications → Webhook URL
+   - Webhook URL: `http://your-ngrok-url.ngrok.io/copy-trade`
+   - Message: Paste the JSON from copy-trade-ui
+   - TradingView will replace template variables with actual values when alert fires
+
+4. **TradingView Alert Fires:**
+   - Strategy generates signal (buy/sell)
+   - TradingView replaces template variables:
+     - `{{strategy.order.action}}` → `"BUY"` or `"SELL"`
+     - `{{strategy.order.price}}` → `5847.25`
+     - `{{strategy.order.type}}` → `"MARKET"` or `"LIMIT"`
+   - TradingView sends HTTP POST to webhook URL with resolved JSON
+
+5. **Flask `/copy-trade` Endpoint Receives Webhook:**
+   - Located in `app.py` (lines 244-285)
+   - Validates security key
+   - Normalizes field names for NT8:
+     - `entry` → `price`
+     - `sl` → `stop_loss`
+     - `tp` → `take_profit`
+     - Converts `order_type` to lowercase
+     - Strips "M" from timeframe ("15M" → "15")
+   - Logs received JSON and normalized JSON
+
+6. **Forward to NT8 via TCP Socket:**
+   - Calls `send_to_nt8_socket(data)` function
+   - Opens TCP connection to localhost:8889
+   - Sends JSON to NT8 TradingBridge addon
+   - Closes connection
+
+7. **NT8 TradingBridge Addon Executes Trade:**
+   - C# addon listening on port 8889
+   - Receives JSON, parses trade details
+   - Submits market/limit order to broker
+   - Attaches stop-loss and take-profit orders (OCO linked)
+   - Logs execution to NT8 database
+
+**Key Features:**
+- ✅ Built on Day 1 of TradersHub development
+- ✅ Copy-trade-ui is THE KEY PAGE for building webhook JSON
+- ✅ Supports dynamic TradingView template variables
+- ✅ Works with any TradingView strategy (Pine Script or built-in)
+- ✅ Multi-account support (1 webhook → multiple NT8 accounts)
+- ✅ Automatic risk management (SL/TP orders)
+
+**Future Expansion:**
+- TradeStation will use same webhook pattern
+- MultiCharts will use same webhook pattern
+- Execution Router will support multiple platforms (NT8, MT5, cTrader)
+
+**User Quotes:**
+- "the CORE of tradershub is taking strategy alerts from tradingview strategies...PRIMARY source is TradingView and ALWAYS HAS from DAY ONE"
+- "I am annoyed you DONT KNOW THAT!!!!!!!!!!!"
+- "copy-trade-ui is the making of all alerts at present so it is KEY page"
+- "this is going to be the basis of adding in strategy alerts from TradeStation and MultiCharts"
+
+**Files Modified:**
+- `docs/sync/MASTER_CONTEXT.md` - Complete TradingView webhook flow, architecture correction
+- `docs/sync/QUICK_CONTEXT.md` - Updated session info, priority tasks, notes
+- `docs/sync/SESSION_STATE.md` - This section added
+
+**Next Steps:**
+- Push all updated sync files to tradershub-sync repository
+- Verify URLs accessible by Claude Web
+- Update EXECUTION_ROUTER_PLAN.md to reflect TradingView as primary signal source
+
+---
 
 ### ACCOUNT SETTINGS - Nov 15 Evening (LATEST)
 
