@@ -2,7 +2,7 @@
 
 **Complete project overview for all Claude instances**
 
-Last Updated: 2025-11-16 Evening NZDT (TradeStation Integration Complete)
+Last Updated: 2025-11-16 Late Evening NZDT (Config Dashboard Complete)
 
 ---
 
@@ -526,5 +526,5 @@ Signal Sources (TradingView Webhooks, Discord, TradeStation, MultiCharts)
 
 ---
 
-Last Updated: 2025-11-16 Early Morning by Claude Code (CLI)
+Last Updated: 2025-11-16 Late Evening NZDT (Config Dashboard Complete)
 **Major Update:** Documentation corrected to reflect TradingView webhooks as PRIMARY core system (Day 1 feature)
